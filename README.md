@@ -1,8 +1,6 @@
 ### Dradis Docker Container
 
-[![GitHub](http://img.shields.io/badge/github-zuazo/dradis--docker-blue.svg?style=flat)](https://github.com/zuazo/dradis-docker) [![ImageLayers Size](https://img.shields.io/imagelayers/image-size/zuazo/dradis/latest.svg)](https://imagelayers.io/?images=zuazo/dradis:latest) [![Docker Repository on Quay.io](https://quay.io/repository/zuazo/dradis/status "Docker Repository on Quay.io")](https://quay.io/repository/zuazo/dradis) [![Build Status](http://img.shields.io/travis/zuazo/dradis-docker.svg?style=flat)](https://travis-ci.org/zuazo/dradis-docker)
-
-A [Docker](https://www.docker.com/) image with [Dradis](http://dradisframework.org/).
+A [Docker](https://www.docker.com/) image with [Dradis-CE](http://dradisframework.org/).
 
 ### Supported Tags and Respective `Dockerfile` Links
 
@@ -18,10 +16,6 @@ From [its own website](http://dradisframework.org/):
 
 #### How to Use This Image
 
-##### Download the Image
-
-    $ docker pull zuazo/dradis
-
 ##### Create a Directory to Store the Database Data
 
     $ mkdir -p dbdata/
@@ -33,17 +27,15 @@ You need to set the `/dbdata` volume path:
     $ docker run \
         --publish 3000:3000 \
         --volume "$(pwd)/dbdata:/dbdata" \
-      zuazo/dradis
+      evait/dradis-ce
 
 You can now open [http://127.0.0.1:3000/](http://127.0.0.1:3000/) to access Dradis.
 
 #### Build from Sources
 
-Instead of installing the image from Docker Hub, you can build the image from sources if you prefer:
-
-    $ git clone https://github.com/zuazo/dradis-docker dradis
-    $ cd dradis
-    $ docker build -t zuazo/dradis .
+    $ git clone https://github.com/evait/dradis-docker-ce
+    $ cd dradis-docker-ce
+    $ docker build -t evait/dradis-ce .
 
 #### Exposed TCP/IP Ports
 
@@ -57,7 +49,6 @@ You can change them using `docker run -e [...]` or in your *Dockerfile*, using t
 
 #### Read-only Environment Variables Used at Build Time
 
-* `DRADIS_VERSION`: Dradis version to install (`3.0.0.rc1`).
 * `RAILS_ENV`: Rails environment (`production`).
 
 The docker working directory is set to the main Dradis directory (`/opt/dradis`).

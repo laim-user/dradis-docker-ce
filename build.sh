@@ -4,4 +4,4 @@ docker build \
   --rm \
   --force-rm \
   "${@}" \
-  -t zuazo/dradis .
+  -t evait/dradis-ce .

@@ -2,6 +2,10 @@
 
 A [Docker](https://www.docker.com/) image with [Dradis-CE](http://dradisframework.org/).
 
+This is a fork of [zuazo/dradis-docker](https://github.com/zuazo/dradis-docker), updating it to use the active dradis-ce repo.
+
+This also has an `arch`-branch for an Arch Linux based image, which is more of an artifact of trying to fix an issue building on a grsecurity host (still doesn't work) than a recommended image as there's currently no reasonably minimal arch base image available, making it quite large.
+
 ### Supported Tags and Respective `Dockerfile` Links
 
 * `latest` ([*/Dockerfile*](https://github.com/zuazo/dradis-docker/tree/master/Dockerfile))

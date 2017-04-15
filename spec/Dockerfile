@@ -1,4 +1,4 @@
-FROM zuazo/dradis
+FROM evait/dradis-ce
 
 USER root
 

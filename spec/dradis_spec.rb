@@ -1,16 +1,16 @@
 require 'dockerspec/serverspec'
 require 'dockerspec/infrataster'
 
-describe docker_build('.', tag: 'zuazo/dradis') do
-  it { should have_workdir '/opt/dradis' }
+describe docker_build('.', tag: 'evait/dradis-ce') do
+  it { should have_workdir '/opt/dradis-ce' }
   it { should have_expose '3000' }
   it { should have_entrypoint %w(/entrypoint.sh) }
 
-  describe docker_build('spec/', tag: 'zuazo/dradis_test') do
+  describe docker_build('spec/', tag: 'evait/dradis-ce_test') do
     docker_env = { 'SECRET_KEY_BASE' => 'secret' }
     wait = ENV['TRAVIS'] ? 10 : 2
 
-    describe docker_run('zuazo/dradis_test', env: docker_env, wait: wait) do
+    describe docker_run('evait/dradis-ce_test', env: docker_env, wait: wait) do
 
       describe package('nodejs') do
         it { should be_installed }
@@ -20,7 +20,7 @@ describe docker_build('.', tag: 'zuazo/dradis') do
         expect(command('which node || which nodejs').exit_status).to eq 0
       end
 
-      describe process('su -m -l dradis -c exec bundle exec rails server') do
+      describe process('su -m -l dradis-ce -c exec bundle exec rails server') do
         it { should be_running }
       end
 
@@ -55,7 +55,7 @@ describe docker_build('.', tag: 'zuazo/dradis') do
               click_button 'Set password and continue'
             end
           end
-          
+
           describe 'on /session/new' do
             before { visit '/session/new' }
 

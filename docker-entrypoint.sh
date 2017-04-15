@@ -5,7 +5,6 @@ set -e
 
 SECRET_KEY_BASE="${SECRET_KEY_BASE:-$(bundle exec rake secret)}"
 export SECRET_KEY_BASE
-
 RAILS_SERVE_STATIC_FILES="true"
 export RAILS_SERVE_STATIC_FILES
 
@@ -15,7 +14,7 @@ chmod -R u+w /dbdata/
 
 if [ -z "${*}" ]
 then
-  exec su -m -l dradis-ce -c 'exec bundle exec rails server'
+  exec su -m -l dradis-ce -c 'exec bundle-2.3 exec rails server'
 else
-  exec su -m -l dradis-ce -c 'exec bundle exec rails server "$0" "$@"' -- "${@}"
+  exec su -m -l dradis-ce -c 'exec bundle-2.3 exec rails server "$0" "$@"' -- "${@}"
 fi

@@ -1,35 +1,31 @@
-FROM ruby:2.3-slim
+FROM base/archlinux
 
 ENV RAILS_ENV=production \
-    APT_ARGS="-y --no-install-recommends --no-upgrade -o Dpkg::Options::=--force-confnew"
+    PACMAN_ARGS="--noconfirm"
 
 # Copy ENTRYPOINT script
 ADD docker-entrypoint.sh /entrypoint.sh
-ADD ssl_patch.patch /ssl_patch.patch
+ADD rb23_patch.patch /rb23_patch.patch
 
-RUN apt-get update && \
+RUN pacman -Syy $PACMAN_ARGS && \
 # Install requirements
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install $APT_ARGS \
-      gcc \
+    pacman -S $PACMAN_ARGS \
+      base-devel \
+      ruby2.3 \
+      ruby2.3-bundler \
       git \
-      g++ \
-      build-essential \
-      libsqlite3-dev \
-      make \
+      sqlite3 \
       nodejs \
-      patch \
-      libmysqlclient-dev \
-      # libv8-dev \
+      libmariadbclient \
       wget && \
 # Install Dradis
-# sed -i 's/^# *\(.*execjs\)/\1/' Gemfile && \
     cd /opt && \
     git clone https://github.com/dradis/dradis-ce.git && \
     cd dradis-ce && \
-    # rm -f Gemfile.lock && \
-    ruby bin/setup && \
-    bundle exec rake assets:precompile && \
+    patch -p1 -i /rb23_patch.patch && \
+    bundle-2.3 install --path vendor/bundle && \
+    ruby-2.3 bin/setup && \
+    bundle-2.3 exec rake assets:precompile && \
 # Entrypoint:
     chmod +x /entrypoint.sh && \
 # Create dradis user:
@@ -37,24 +33,8 @@ RUN apt-get update && \
     useradd -r -g dradis-ce -d /opt/dradis-ce dradis-ce && \
     mkdir -p /dbdata && \
     chown -R dradis-ce:dradis-ce /opt/dradis-ce/ /dbdata/ && \
-    patch -p1 -i /ssl_patch.patch && \
 # Clean up:
-    apt-get remove -y --purge \
-      gcc \
-      g++ \
-      build-essential \
-      libsqlite3-dev \
-      make \
-      patch \
-      libmysqlclient-dev \
-      wget && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install $APT_ARGS \
-      libsqlite3-0  \
-      libmysqlclient18 && \
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get autoremove -y && \
-    rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* && \
+    yes | pacman -Scc && \
     rm -f /dbdata/production.sqlite3
 
 WORKDIR /opt/dradis-ce

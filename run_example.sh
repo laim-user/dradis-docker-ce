@@ -5,4 +5,4 @@ mkdir -p dbdata/
 docker run \
   -p 3000:3000 \
   --volume "$(pwd)/dbdata:/dbdata" \
-  evait/dradis-ce "${@}"
+  evait/dradis "${@}"

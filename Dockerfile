@@ -20,14 +20,11 @@ RUN apt-get update && \
       nodejs \
       patch \
       libmysqlclient-dev \
-      # libv8-dev \
       wget && \
 # Install Dradis
-# sed -i 's/^# *\(.*execjs\)/\1/' Gemfile && \
     cd /opt && \
     git clone https://github.com/dradis/dradis-ce.git && \
     cd dradis-ce && \
-    # rm -f Gemfile.lock && \
     ruby bin/setup && \
     bundle exec rake assets:precompile && \
 # Entrypoint:

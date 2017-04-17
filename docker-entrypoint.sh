@@ -13,8 +13,9 @@ REDIS_URL="redis://dradis-redis:6379/1"
 export REDIS_URL
 
 cp -n /opt/dradis-ce/db/production.sqlite3 /dbdata/
-chown -R dradis-ce /dbdata/
-chmod -R u+w /dbdata/
+cp -r -n /opt/dradis-ce/templates_orig/* /opt/dradis-ce/templates/
+chown -R dradis-ce /dbdata/ /opt/dradis-ce/templates
+chmod -R u+w /dbdata/ /opt/dradis-ce/templates
 
 if [ -z "${*}" ]
 then

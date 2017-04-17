@@ -30,6 +30,10 @@ $ docker build -t evait/dradis-ce .
 
     $ mkdir -p dbdata/
 
+##### Create a Directory to be able to  add / modify templates
+
+    $ mkdir -p templates/
+
 ##### Setup a Redis instance
 
     $ docker run --name dradis-redis -d redis:alpine

@@ -53,11 +53,15 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove -y && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* && \
-    rm -f /dbdata/production.sqlite3
+    rm -f /dbdata/production.sqlite3 && \
+    mv templates templates_orig && \
+    mkdir -p templates && \
+    chown -R dradis-ce:dradis-ce templates
 
 WORKDIR /opt/dradis-ce
 
 VOLUME /dbdata
+VOLUME /opt/dradis-ce/templates
 
 EXPOSE 3000
 

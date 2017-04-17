@@ -20,26 +20,31 @@ From [its own website](http://dradisframework.org/):
 
 #### How to Use This Image
 
+##### Build
+
+$ git clone https://github.com/evait/dradis-docker-ce
+$ cd dradis-docker-ce
+$ docker build -t evait/dradis-ce .
+
 ##### Create a Directory to Store the Database Data
 
     $ mkdir -p dbdata/
 
+##### Setup a Redis instance
+
+    $ docker run --name dradis-redis -d redis:alpine
+
 ##### Run Dradis
 
-You need to set the `/dbdata` volume path:
+You need to set the `/dbdata` volume path and link the Redis container:
 
     $ docker run \
         --publish 3000:3000 \
         --volume "$(pwd)/dbdata:/dbdata" \
+        --link dradis-redis:redis \
       evait/dradis-ce
 
 You can now open [http://127.0.0.1:3000/](http://127.0.0.1:3000/) to access Dradis.
-
-#### Build from Sources
-
-    $ git clone https://github.com/evait/dradis-docker-ce
-    $ cd dradis-docker-ce
-    $ docker build -t evait/dradis-ce .
 
 #### Exposed TCP/IP Ports
 
@@ -55,7 +60,7 @@ You can change them using `docker run -e [...]` or in your *Dockerfile*, using t
 
 * `RAILS_ENV`: Rails environment (`production`).
 
-The docker working directory is set to the main Dradis directory (`/opt/dradis`).
+The docker working directory is set to the main Dradis directory (`/opt/dradis-ce`).
 
 ### License and Author
 

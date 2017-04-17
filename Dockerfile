@@ -1,11 +1,11 @@
 FROM ruby:2.3-slim
 
-# ENV RAILS_ENV=production \
-ENV APT_ARGS="-y --no-install-recommends --no-upgrade -o Dpkg::Options::=--force-confnew"
+ENV RAILS_ENV=production \
+    APT_ARGS="-y --no-install-recommends --no-upgrade -o Dpkg::Options::=--force-confnew"
 
 # Copy ENTRYPOINT script
 ADD docker-entrypoint.sh /entrypoint.sh
-# ADD ssl_patch.patch /ssl_patch.patch
+ADD ssl_patch.patch /ssl_patch.patch
 
 RUN apt-get update && \
 # Install requirements
@@ -26,7 +26,7 @@ RUN apt-get update && \
     git clone https://github.com/dradis/dradis-ce.git && \
     cd dradis-ce && \
     ruby bin/setup && \
-    # bundle exec rake assets:precompile && \
+    bundle exec rake assets:precompile && \
     sed -i 's@database:\s*db@database: /dbdata@' /opt/dradis-ce/config/database.yml &&\
 # Entrypoint:
     chmod +x /entrypoint.sh && \
@@ -35,7 +35,7 @@ RUN apt-get update && \
     useradd -r -g dradis-ce -d /opt/dradis-ce dradis-ce && \
     mkdir -p /dbdata && \
     chown -R dradis-ce:dradis-ce /opt/dradis-ce/ /dbdata/ && \
-    # patch -p1 -i /ssl_patch.patch && \
+    patch -p1 -i /ssl_patch.patch && \
 # Clean up:
     apt-get remove -y --purge \
       gcc \
@@ -53,7 +53,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove -y && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* && \
-    rm -f /dbdata/development.sqlite3
+    rm -f /dbdata/production.sqlite3
 
 WORKDIR /opt/dradis-ce
 

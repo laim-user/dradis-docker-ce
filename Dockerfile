@@ -5,7 +5,7 @@ ENV RAILS_ENV=production \
 
 # Copy ENTRYPOINT script
 ADD docker-entrypoint.sh /entrypoint.sh
-ADD ssl_patch.patch /ssl_patch.patch
+ADD production.patch /production.patch
 
 RUN apt-get update && \
 # Install requirements
@@ -35,7 +35,7 @@ RUN apt-get update && \
     useradd -r -g dradis-ce -d /opt/dradis-ce dradis-ce && \
     mkdir -p /dbdata && \
     chown -R dradis-ce:dradis-ce /opt/dradis-ce/ /dbdata/ && \
-    patch -p1 -i /ssl_patch.patch && \
+    patch -p1 -i /production.patch && \
 # Clean up:
     apt-get remove -y --purge \
       gcc \

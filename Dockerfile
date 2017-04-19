@@ -25,6 +25,7 @@ RUN apt-get update && \
     cd /opt && \
     git clone https://github.com/dradis/dradis-ce.git && \
     cd dradis-ce && \
+    patch -p1 -i /production.patch && \
     ruby bin/setup && \
     bundle exec rake assets:precompile && \
     sed -i 's@database:\s*db@database: /dbdata@' /opt/dradis-ce/config/database.yml &&\
@@ -35,7 +36,6 @@ RUN apt-get update && \
     useradd -r -g dradis-ce -d /opt/dradis-ce dradis-ce && \
     mkdir -p /dbdata && \
     chown -R dradis-ce:dradis-ce /opt/dradis-ce/ /dbdata/ && \
-    patch -p1 -i /production.patch && \
 # Clean up:
     apt-get remove -y --purge \
       gcc \

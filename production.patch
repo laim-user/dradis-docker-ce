@@ -1,3 +1,20 @@
+diff --git a/Gemfile.plugins.template b/Gemfile.plugins.template
+index da2da4d..35c1545 100644
+--- a/Gemfile.plugins.template
++++ b/Gemfile.plugins.template
+@@ -12,10 +12,10 @@ gem 'dradis-calculator_dread', '~> 3.6', github: 'dradis/dradis-calculator_dread
+ # ---------------------------------------------------------------------- Export
+ gem 'dradis-csv',         '~> 3.6', github: 'dradis/dradis-csv'
+ gem 'dradis-html_export', '~> 3.6', github: 'dradis/dradis-html_export'
+-
++# gem 'dradis-pdf_export',            github: 'evs-ch/dradis-pdf_export'
+ 
+ # ---------------------------------------------------------------------- Import
+-# gem 'dradis-mediawiki', '~> 3.6', github: 'dradis/dradis-mediawiki'
++gem 'dradis-mediawiki', '~> 3.6', github: 'dradis/dradis-mediawiki'
+ # gem 'dradis-vulndb',    '~> 3.6', github: 'dradis/dradis-vulndb'
+ 
+ # ---------------------------------------------------------------------- Upload
 diff --git a/config/application.rb b/config/application.rb
 index 79d17d7..46fd082 100644
 --- a/config/application.rb

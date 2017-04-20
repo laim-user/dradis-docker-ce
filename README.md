@@ -40,12 +40,13 @@ $ docker build -t evait/dradis-ce .
 
 ##### Run Dradis
 
-You need to set the `/dbdata` volume path and link the Redis container:
+You need to set the `/dbdata` and `/templates` volume path and link the Redis container:
 
     $ docker run \
         --publish 3000:3000 \
         --volume "$(pwd)/dbdata:/dbdata" \
         --link dradis-redis:redis \
+        --volume "$(pwd)/templates:/opt/dradis-ce/templates" \
       evait/dradis-ce
 
 You can now open [http://127.0.0.1:3000/](http://127.0.0.1:3000/) to access Dradis.

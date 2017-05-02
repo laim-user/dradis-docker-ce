@@ -22,9 +22,9 @@ From [its own website](http://dradisframework.org/):
 
 ##### Build
 
-$ git clone https://github.com/evait/dradis-docker-ce
-$ cd dradis-docker-ce
-$ docker build -t evait/dradis-ce .
+    $ git clone https://github.com/evait-security/dradis-docker-ce.git
+    $ cd dradis-docker-ce
+    $ docker build -t evait/dradis-ce .
 
 ##### Create a Directory to Store the Database Data
 

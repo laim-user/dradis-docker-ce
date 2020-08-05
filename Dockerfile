@@ -1,11 +1,14 @@
-FROM ruby:2.3-slim
+FROM ruby:2.4.1-slim
+
+LABEL supported_version_dradis="3.18.0"
 
 ENV RAILS_ENV=production \
-    APT_ARGS="-y --no-install-recommends --no-upgrade -o Dpkg::Options::=--force-confnew"
+    REDIS_URL="redis://dradis-redis:6379/1" \
+    APT_ARGS="-y --no-install-recommends --no-upgrade -o Dpkg::Options::=--force-confnew" \
+    BUNDLER_VERSION=2.1.4
 
-# Copy ENTRYPOINT script
-ADD docker-entrypoint.sh /entrypoint.sh
-ADD production.patch /production.patch
+# Copy ENTRYPOINT script and production config
+COPY docker-entrypoint.sh production.rb /
 
 RUN apt-get update && \
 # Install requirements
@@ -18,32 +21,36 @@ RUN apt-get update && \
       libsqlite3-dev \
       make \
       nodejs \
-      patch \
       libmysqlclient-dev \
       wget && \
-# Install Dradis
-    cd /opt && \
-    git clone https://github.com/dradis/dradis-ce.git && \
+      cd /opt && \
+    git clone https://github.com/dradis/dradis-ce.git --branch=v3.18.0 && \
     cd dradis-ce && \
-    patch -p1 -i /production.patch && \
+    gem install bundler -v 2.1.4 && \
+  # Bugs on dradis-ce side (git)
+    sed -i -E "s%gem 'dradis-openvas',(\s)+'~> 3.18'%gem 'dradis-openvas', '~> 3.18.0.rc1'%" Gemfile.plugins.template && \
+    sed -i "s%system! 'bin/bundle exec thor dradis:setup:welcome'%#system! 'bin/bundle exec thor dradis:setup:welcome'%" bin/setup && \
+    cp /production.rb /opt/dradis-ce/config/environments/production.rb && \
+  # run setup
     ruby bin/setup && \
     bundle exec rake assets:precompile && \
-    sed -i 's@database:\s*db@database: /dbdata@' /opt/dradis-ce/config/database.yml &&\
-# Entrypoint:
-    chmod +x /entrypoint.sh && \
-# Create dradis user:
+  # change dbdata path
+    sed -i 's@database:\s*db@database: /dbdata@' /opt/dradis-ce/config/database.yml && \
+  # Entrypoint:
+    chmod +x /docker-entrypoint.sh && \
+  # Create dradis user:
     groupadd -r dradis-ce && \
     useradd -r -g dradis-ce -d /opt/dradis-ce dradis-ce && \
-    mkdir -p /dbdata && \
+    mkdir -p /dbdata /opt/dradis-ce/templates /opt/dradis-ce/attachments && \
     chown -R dradis-ce:dradis-ce /opt/dradis-ce/ /dbdata/ && \
-# Clean up:
+    mv templates templates_orig && \
+  # Clean up:
     apt-get remove -y --purge \
       gcc \
       g++ \
       build-essential \
       libsqlite3-dev \
       make \
-      patch \
       libmysqlclient-dev \
       wget && \
     DEBIAN_FRONTEND=noninteractive \
@@ -53,16 +60,14 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get autoremove -y && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* && \
-    rm -f /dbdata/production.sqlite3 && \
-    mv templates templates_orig && \
-    mkdir -p templates && \
-    chown -R dradis-ce:dradis-ce templates
+    rm -f /dbdata/* /production.rb
 
 WORKDIR /opt/dradis-ce
 
 VOLUME /dbdata
 VOLUME /opt/dradis-ce/templates
+VOLUME /opt/dradis-ce/attachments
 
 EXPOSE 3000
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

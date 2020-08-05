@@ -2,9 +2,7 @@
 
 A [Docker](https://www.docker.com/) image with [Dradis-CE](http://dradisframework.org/).
 
-This is a fork of [zuazo/dradis-docker](https://github.com/zuazo/dradis-docker), updating it to use the active dradis-ce repo.
-
-This also has an `arch`-branch for an Arch Linux based image, which is more of an artifact of trying to fix an issue building on a grsecurity host (still doesn't work) than a recommended image as there's currently no reasonably minimal arch base image available, making it quite large.
+This is a fork of [evait-security/dradis-docker-ce](https://github.com/evait-security/dradis-docker-ce), updating it to use the active dradis-ce repo. Current supported dradis-ce version 3.18.0.
 
 ### Supported Tags and Respective `Dockerfile` Links
 
@@ -22,32 +20,48 @@ From [its own website](http://dradisframework.org/):
 
 ##### Build
 
-    $ git clone https://github.com/evait-security/dradis-docker-ce.git
+    $ git clone https://github.com/laim-user/dradis-docker-ce.git
     $ cd dradis-docker-ce
-    $ docker build -t evait/dradis-ce .
+    $ docker build -t laim/dradis-ce .
 
 ##### Create a Directory to Store the Database Data
 
     $ mkdir -p dbdata/
 
+##### Create a Directory to Store the attachments
+
+    $ mkdir -p attachments/
+
 ##### Create a Directory to be able to  add / modify templates
 
     $ mkdir -p templates/
 
-##### Setup a Redis instance
-
-    $ docker run --name dradis-redis -d redis:alpine
-
-##### Run Dradis
-
-You need to set the `/dbdata` and `/templates` volume path and link the Redis container:
+##### Run dradis in test mode. Need rebuild with RAILS_ENV=test
 
     $ docker run \
         --publish 3000:3000 \
         --volume "$(pwd)/dbdata:/dbdata" \
-        --link dradis-redis:redis \
         --volume "$(pwd)/templates:/opt/dradis-ce/templates" \
-      evait/dradis-ce
+        --volume "$(pwd)/attachments:/opt/dradis-ce/attachments" \
+      laim/dradis-ce
+
+##### Run in production mode (default)
+
+###### Run Redis
+
+    $ docker run --network dradis-net --name dradis-redis -d redis:alpine
+
+###### Run Dradis
+
+You need to set the `/dbdata`, `/templates` and `/attachments` volume path and add container to the 'dradis-net' subnet:
+
+    $ docker run -d \
+        --publish 3000:3000 \
+        --network dradis-net \
+        --volume "$(pwd)/dbdata:/dbdata" \
+        --volume "$(pwd)/templates:/opt/dradis-ce/templates" \
+        --volume "$(pwd)/attachments:/opt/dradis-ce/attachments" \
+      laim/dradis-ce
 
 You can now open [http://127.0.0.1:3000/](http://127.0.0.1:3000/) to access Dradis.
 

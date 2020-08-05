@@ -4,4 +4,4 @@ docker build \
   --rm \
   --force-rm \
   "${@}" \
-  -t evait/dradis-ce .
+  -t laim/dradis-ce .

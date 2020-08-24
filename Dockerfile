@@ -27,9 +27,6 @@ RUN apt-get update && \
     git clone https://github.com/dradis/dradis-ce.git --branch=v3.18.0 && \
     cd dradis-ce && \
     gem install bundler -v 2.1.4 && \
-  # Bugs on dradis-ce side (git)
-    sed -i -E "s%gem 'dradis-openvas',(\s)+'~> 3.18'%gem 'dradis-openvas', '~> 3.18.0.rc1'%" Gemfile.plugins.template && \
-    sed -i "s%system! 'bin/bundle exec thor dradis:setup:welcome'%#system! 'bin/bundle exec thor dradis:setup:welcome'%" bin/setup && \
     cp /production.rb /opt/dradis-ce/config/environments/production.rb && \
   # run setup
     ruby bin/setup && \

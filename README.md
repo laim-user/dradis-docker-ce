@@ -35,7 +35,7 @@ From [its own website](http://dradisframework.org/):
 ##### Create a Directory to be able to  add / modify templates
 
     $ mkdir -p templates/
-
+    
 ##### Run dradis in test mode. Need rebuild with RAILS_ENV=test
 
     $ docker run \
@@ -46,6 +46,10 @@ From [its own website](http://dradisframework.org/):
       laim/dradis-ce
 
 ##### Run in production mode (default)
+
+###### Create a docker network
+    
+    $ docker network create dradis-net
 
 ###### Run Redis
 
